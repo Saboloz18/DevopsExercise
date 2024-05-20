@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  MyDatabase:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: MyDatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  testapplication:
+    build:
+      context: .
+      dockerfile: TestApplication/Dockerfile
+    ports:
+      - "5000:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=MyDatabase;Database=MyDatabase;Username=myuser;Password=mypassword
+    depends_on:
+      - MyDatabase
+
+volumes:
+  postgres-data:

@@ -24,11 +24,11 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var dbContext = services.GetRequiredService<MyAppContext>();
+        dbContext.Database.Migrate();   
         SeedData(dbContext);
     }
     catch (Exception ex)
     {
-        // Handle any exceptions here
         Console.WriteLine("An error occurred while seeding the database.");
         Console.WriteLine(ex.Message);
     }
@@ -54,18 +54,19 @@ app.Run();
 
 static void SeedData(MyAppContext dbContext)
 {
-    // Check if there's already data in the database
+
     if (!dbContext.Person.Any())
     {
-        // Seed data for the Person entity
+
         dbContext.Person.AddRange(
             new Person { Name = "saxeli1", Age = 30 },
             new Person { Name = "saxeli2", Age = 25 },
             new Person { Name = "saxeli3", Age = 35 }
         );
 
-        // Save changes to the database
+
         dbContext.SaveChanges();
     }
+
 }
 
